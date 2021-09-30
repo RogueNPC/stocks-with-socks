@@ -1,0 +1,22 @@
+{
+  "name": "stocks-with-socks",
+  "version": "1.0.0",
+  "description": "stocks with socks",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RogueNPC/stocks-with-socks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RogueNPC/stocks-with-socks/issues"
+  },
+  "homepage": "https://github.com/RogueNPC/stocks-with-socks#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
