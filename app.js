@@ -1,21 +1,39 @@
+require("dotenv").config();
+const finnhub = require("finnhub");
 const express = require("express");
-const app = express();
 const http = require("http");
+const app = express();
+
+// init socket.io
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
-require("dotenv").config()
-const finnhub = require("finnhub")
+const io = require("socket.io")(server);
 
 // Set up express static folder
 app.use(express.static("static"));
 
 // Routes
 app.get("/", (req, res) => {
-	res.sendFile(__dirname + "/static/index.html");
+	res.sendFile(__dirname + "static/index.html");
 });
 
-app.get("/quotes", (req, res) => {
+io.on("connection", (socket) => {
+	console.log(`User Connected`);
+
+  socket.on('API_CALL', () => {
+    console.log("GETTING DATA")
+    // getQuotes()
+    // .then((data) => {
+    //   console.log("SENDING DATA")
+    //   io.emit('SEND_DATA', data)
+    // })
+  })
+
+	socket.on("disconnect", () => {
+		console.log("User Disconnected");
+	});
+});
+
+let getQuotes = () => {
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
   api_key.apiKey = ""
   const finnhubClient = new finnhub.DefaultApi()
@@ -26,7 +44,8 @@ app.get("/quotes", (req, res) => {
     new Promise((resolve, reject) => {
       finnhubClient.quote('AAPL', (error, data, response) => {
         resolve({
-          "Apple": {
+          "name": "Apple",
+          "data": {
             "current": data['c'],
             "high": data['h'],
             "low": data['l']
@@ -40,7 +59,8 @@ app.get("/quotes", (req, res) => {
     new Promise((resolve, reject) => {
       finnhubClient.quote('GME', (error, data, response) => {
         resolve({
-          "Gamestop": {
+          "name": "Gamestop",
+          "data": {
             "current": data['c'],
             "high": data['h'],
             "low": data['l']
@@ -51,24 +71,12 @@ app.get("/quotes", (req, res) => {
   )
 
   Promise.all(promises).then(data => {
-    console.log(data)
+    return data
   })
   .catch(err => {
     console.log(err)
   })
-
-
-})
-
-io.on("connection", (socket) => {
-	console.log(`User Connected`);
-
-  socket.emit('API_CALL', (data))
-
-	socket.on("disconnect", () => {
-		console.log("User Disconnected");
-	});
-});
+}
 
 const PORT = 3000;
 app.listen(PORT, () => {
