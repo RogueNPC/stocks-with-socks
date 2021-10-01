@@ -29,56 +29,34 @@ const getQuotes = () => {
 
 	return new Promise((resolve, reject) => {
 		let promises = [];
+		let indexes = ["AAPL", "GME", "AMZN", "TSLA"];
 
-		promises.push(
-			new Promise((resolve, reject) => {
-				finnhubClient.quote("AAPL", (error, data, response) => {
-					let price;
+		for (let i = 0; i < indexes.length; i++) {
+			promises.push(
+				new Promise((resolve, reject) => {
+					finnhubClient.quote(indexes[i], (error, data, response) => {
+						let price;
 
-					if (data["c"] >= data["o"]) {
-						price = "Up";
-					} else {
-						price = "Down";
-					}
+						if (data["c"] >= data["o"]) {
+							price = "Up";
+						} else {
+							price = "Down";
+						}
 
-					resolve({
-						name: "Apple",
-						data: {
-							price: price,
-							current: data["c"],
-							open: data["o"],
-							high: data["h"],
-							low: data["l"],
-						},
+						resolve({
+							name: indexes[i],
+							data: {
+								price: price,
+								current: data["c"],
+								open: data["o"],
+								high: data["h"],
+								low: data["l"],
+							},
+						});
 					});
-				});
-			})
-		);
-
-		promises.push(
-			new Promise((resolve, reject) => {
-				finnhubClient.quote("GME", (error, data, response) => {
-					let price;
-
-					if (data["c"] >= data["o"]) {
-						price = "Up";
-					} else {
-						price = "Down";
-					}
-
-					resolve({
-						name: "Gamestop",
-						data: {
-							price: price,
-							current: data["c"],
-							open: data["o"],
-							high: data["h"],
-							low: data["l"],
-						},
-					});
-				});
-			})
-		);
+				})
+			);
+		}
 
 		Promise.all(promises)
 			.then((data) => {
