@@ -1,3 +1,18 @@
 * {
 	color: red;
 }
+
+h1,h2{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+button { 
+    font-family: 'Courier New', Courier, monospace;
+    background: #333; 
+    border: none; 
+    padding: 0 1rem; 
+    margin: 0.25rem; 
+    border-radius: 3px; 
+    outline: none; 
+    color: #fff; 
+}
