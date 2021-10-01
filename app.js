@@ -16,6 +16,14 @@ app.get('/', (req, res) => {
     return res.json({response: "Hello world"})
 })
 
+io.on("connection", (socket) => {
+  console.log(`User Connected`)
+
+  socket.on('disconnect', () => {
+    console.log('User Disconnected')
+  })
+})
+
 const PORT = 3000
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`)
