@@ -33,10 +33,20 @@ const getQuotes = () => {
 		promises.push(
 			new Promise((resolve, reject) => {
 				finnhubClient.quote("AAPL", (error, data, response) => {
+					let price;
+
+					if (data["c"] >= data["o"]) {
+						price = "Up";
+					} else {
+						price = "Down";
+					}
+
 					resolve({
 						name: "Apple",
 						data: {
+							price: price,
 							current: data["c"],
+							open: data["o"],
 							high: data["h"],
 							low: data["l"],
 						},
@@ -48,10 +58,20 @@ const getQuotes = () => {
 		promises.push(
 			new Promise((resolve, reject) => {
 				finnhubClient.quote("GME", (error, data, response) => {
+					let price;
+
+					if (data["c"] >= data["o"]) {
+						price = "Up";
+					} else {
+						price = "Down";
+					}
+
 					resolve({
 						name: "Gamestop",
 						data: {
+							price: price,
 							current: data["c"],
+							open: data["o"],
 							high: data["h"],
 							low: data["l"],
 						},
