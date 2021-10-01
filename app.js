@@ -1,30 +1,27 @@
-const express = require("express")
+const express = require("express");
+const app = express();
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+// Set up express static folder
+app.use(express.static("static"));
 
 // Routes
-const stocks = require("./static/client.js")
-
-const app = express()
-
-const http = require("http")
-const server = http.createServer(app)
-const { Server } = require('socket.io')
-const io = new Server(server)
-
-app.use("/stocks", stocks)
-
-app.get('/', (req, res) => {
-    return res.json({response: "Hello world"})
-})
+app.get("/", (req, res) => {
+	res.sendFile(__dirname + "/static/index.html");
+});
 
 io.on("connection", (socket) => {
-  console.log(`User Connected`)
+	console.log(`User Connected`);
 
-  socket.on('disconnect', () => {
-    console.log('User Disconnected')
-  })
-})
+	socket.on("disconnect", () => {
+		console.log("User Disconnected");
+	});
+});
 
-const PORT = 3000
+const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`)
-})
+	console.log(`Server listening on port ${PORT}`);
+});
