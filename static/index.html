@@ -12,12 +12,16 @@
     <script src="socket.io/socket.io.js"></script>
 </head>
 
-<body>
-    <h1 style="text-align: center; font-weight: bold;">STONKS</h1>
+<body id="data-container" style="display: flex; flex-direction: column; align-items: center;">
+    <h1 style="text-align: center; font-weight: bold;">
+        <img src='/parrots/exceptionallyfastparrot.gif'>
+        STONKS WITH SOCKS
+        <img src='/parrots/exceptionallyfastparrot.gif'>
+    </h1>
 
-    <div id="stock-container" style="display: flex; justify-content: space-evenly;"></div>
+    <div id="stock-container" style="display: flex; justify-content: space-evenly; width: 75vw"></div>
 
-    <button id="refresh-stocks-btn">Refresh stonks</button>
+    <button id="refresh-stocks-btn" style="width: fit-content;">Gib data plox</button>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='./client.js'></script>
