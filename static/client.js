@@ -8,7 +8,7 @@ $(document).ready(() => {
 		let email = document.getElementById("email-input").value;
 		console.log(`Email: ${email}`);
 		console.log(`User id: ${user_id}`);
-		socket.emit("VERIFY_EMAIL", [user_id, email]);
+		socket.emit("SEND_EMAIL", [user_id, email]);
 
 		// erase input field and button
 		document.getElementById("email-input").remove();
@@ -17,6 +17,7 @@ $(document).ready(() => {
 		// Add verification code input
 		$("#stock-container").append(
 			`
+			<p>User id: ${user_id}</p>
 			<input id="verification-input" type="text" placeholder="Verification code">
 			<button id="verification-submit">Verify</button>
 			`
@@ -35,6 +36,7 @@ $(document).ready(() => {
 	// 	}, 5000);
 	// });
 
+	// --- Recievers ---
 	socket.on("SEND_DATA", (data) => {
 		// Erase old containers
 		$("#stock-container").empty();

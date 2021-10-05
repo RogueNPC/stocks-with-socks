@@ -1,4 +1,5 @@
 require("dotenv").config();
+const util = require("util");
 const finnhub = require("finnhub");
 const express = require("express");
 const app = express();
@@ -6,6 +7,17 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const nodemailer = require("nodemailer");
+const mg = require("nodemailer-mailgun-transport");
+
+const auth = {
+	auth: {
+		api_key: process.env.MAILGUN_API_KEY,
+		domain: process.env.EMAIL_DOMAIN,
+	},
+};
+
+const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
 // Set up express static folder
 app.use(express.static("static"));
@@ -14,19 +26,39 @@ app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/static/index.html");
 });
 
-let users = {};
+let connectedUsers = {};
 
 io.on("connection", (socket) => {
 	let randNum = Math.floor(Math.random() * (10000 - 1)) + 1;
-	users[socket.id] = { verification_code: randNum.toString() };
-	console.log(`User ${socket.id}: ${randNum}`);
-	console.log(`Users dict: ${users}`);
-
+	connectedUsers[socket.id] = { verification_code: randNum.toString() };
 	io.emit("SEND_USER_ID", socket.id);
+	console.log(`New connection! Users: ${util.inspect(connectedUsers)}`);
 
-	socket.on("VERIFY_EMAIL", (data) => {
-		console.log(`${data[0]}'s email: ${data[1]}`);
+	// --- Recievers ---
+	socket.on("SEND_EMAIL", (data) => {
+		// data[0]: user id
+		// data[1]: user email
+		connectedUsers[data[0]]["email"] = data[1];
 		// send email
+		const user = {
+			email: data[1],
+			verification_code: connectedUsers[data[0]]["verification_code"],
+		};
+		console.log(`${socket.id} req'd email verification! ${util.inspect(connectedUsers)}`);
+
+		nodemailerMailgun
+			.sendMail({
+				from: "no-reply@stockswithsocks.com",
+				to: user.email,
+				subject: "Stocks w/ Socks Verification Code",
+				html: `<h1>Verification code: ${user.verification_code}</h1>`,
+			})
+			.then((res) => {
+				console.log(`Response: ${res}`);
+			})
+			.catch((err) => {
+				console.log(`EMAIL ERROR: ${err}`);
+			});
 	});
 
 	socket.on("API_CALL", () => {
@@ -34,11 +66,16 @@ io.on("connection", (socket) => {
 			io.emit("SEND_DATA", data);
 		});
 	});
+
+	socket.on("disconnect", () => {
+		delete connectedUsers[socket.id];
+		console.log(`${socket.id} disconnected! ${util.inspect(connectedUsers)}`);
+	});
 });
 
 const getQuotes = () => {
 	const api_key = finnhub.ApiClient.instance.authentications["api_key"];
-	api_key.apiKey = process.env.API_KEY;
+	api_key.apiKey = process.env.FINNHUB_API_KEY;
 	const finnhubClient = new finnhub.DefaultApi();
 
 	return new Promise((resolve, reject) => {
