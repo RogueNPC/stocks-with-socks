@@ -14,7 +14,21 @@ app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/static/index.html");
 });
 
+let users = {};
+
 io.on("connection", (socket) => {
+	let randNum = Math.floor(Math.random() * (10000 - 1)) + 1;
+	users[socket.id] = { verification_code: randNum.toString() };
+	console.log(`User ${socket.id}: ${randNum}`);
+	console.log(`Users dict: ${users}`);
+
+	io.emit("SEND_USER_ID", socket.id);
+
+	socket.on("VERIFY_EMAIL", (data) => {
+		console.log(`${data[0]}'s email: ${data[1]}`);
+		// send email
+	});
+
 	socket.on("API_CALL", () => {
 		getQuotes().then((data) => {
 			io.emit("SEND_DATA", data);

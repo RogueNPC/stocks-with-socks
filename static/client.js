@@ -1,10 +1,39 @@
 $(document).ready(() => {
 	const socket = io.connect();
 
-	document.getElementById("refresh-stocks-btn").addEventListener("click", function () {
-		console.log("Button was clicked");
-		socket.emit("API_CALL");
+	let user_id;
+
+	document.getElementById("email-submit").addEventListener("click", (e) => {
+		e.preventDefault();
+		let email = document.getElementById("email-input").value;
+		console.log(`Email: ${email}`);
+		console.log(`User id: ${user_id}`);
+		socket.emit("VERIFY_EMAIL", [user_id, email]);
+
+		// erase input field and button
+		document.getElementById("email-input").remove();
+		document.getElementById("email-submit").remove();
+
+		// Add verification code input
+		$("#stock-container").append(
+			`
+			<input id="verification-input" type="text" placeholder="Verification code">
+			<button id="verification-submit">Verify</button>
+			`
+		);
 	});
+
+	// Add listener for verification code input
+
+	// document.getElementById("refresh-stocks-btn").addEventListener("click", function () {
+	// 	console.log("Button was clicked");
+	// 	socket.emit("API_CALL");
+
+	// 	setInterval(() => {
+	// 		console.log("Refreshing data");
+	// 		socket.emit("API_CALL");
+	// 	}, 5000);
+	// });
 
 	socket.on("SEND_DATA", (data) => {
 		// Erase old containers
@@ -32,5 +61,9 @@ $(document).ready(() => {
             </div>
             `);
 		}
+	});
+
+	socket.on("SEND_USER_ID", (userId) => {
+		user_id = userId;
 	});
 });
