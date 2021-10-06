@@ -46,9 +46,9 @@ $(document).ready(() => {
 			for (let i = 0; i < data.length; i++) {
 				let buy;
 				if (data[i]["data"]["price"] == "Up") {
-					buy = "BUY BUY BUY";
+					buy = "⬆";
 				} else {
-					buy = "SELL SELL SELL";
+					buy = "⬇";
 				}
 
 				$("#stock-container").append(`
