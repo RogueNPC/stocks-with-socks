@@ -6,8 +6,6 @@ $(document).ready(() => {
 	document.getElementById("email-submit").addEventListener("click", (e) => {
 		e.preventDefault();
 		let email = document.getElementById("email-input").value;
-		console.log(`Email: ${email}`);
-		console.log(`User id: ${user_id}`);
 		socket.emit("SEND_EMAIL", [user_id, email]);
 
 		// erase input field and button
@@ -68,7 +66,6 @@ $(document).ready(() => {
 	});
 
 	socket.on("SEND_USER_ID", (userId) => {
-		console.log(`Setting user id to ${userId}`);
 		user_id = userId;
 	});
 

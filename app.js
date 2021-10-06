@@ -38,14 +38,12 @@ io.on("connection", (socket) => {
 	socket.on("SEND_EMAIL", (data) => {
 		// data[0]: user id
 		// data[1]: user email
-		console.log(`Setting email for ${data[0]}`);
 		connectedUsers[data[0]]["email"] = data[1];
 		// send email
 		const user = {
 			email: data[1],
 			verification_code: connectedUsers[data[0]]["verification_code"],
 		};
-		console.log(`${socket.id} req'd email verification! ${util.inspect(connectedUsers)}`);
 
 		nodemailerMailgun
 			.sendMail({
@@ -55,7 +53,6 @@ io.on("connection", (socket) => {
 				html: `<h1>Verification code: ${user.verification_code}</h1>`,
 			})
 			.then((res) => {
-				console.log("EMAIL SENT");
 				console.log(`Response: ${res}`);
 			})
 			.catch((err) => {
@@ -68,10 +65,8 @@ io.on("connection", (socket) => {
 		// data[1]: verification code
 
 		if (connectedUsers[data[0]]["verification_code"] === data[1]) {
-			console.log("correct code was entered, sending data");
 			io.emit("GOOD_CODE", data);
 		} else {
-			console.log("bad code was entered.");
 			io.emit("BAD_CODE");
 		}
 	});
