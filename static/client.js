@@ -17,7 +17,7 @@ $(document).ready(() => {
 		// Add verification code input
 		$("#stock-container").append(
 			`
-			<p style="">Wrong verification code.</p>
+			<p id="bad-code-warning" style="visibility: hidden;">Wrong verification code.</p>
 			<input id="verification-input" type="text" placeholder="Verification code">
 			<button id="verification-submit">Verify</button>
 			`
@@ -82,8 +82,6 @@ $(document).ready(() => {
 
 	socket.on("BAD_CODE", () => {
 		console.log("Bad code entered.");
-		$("stock-container").append(`
-		<>
-		`);
+		document.getElementById("bad-code-warning").style.visibility = "visible";
 	});
 });
