@@ -17,7 +17,7 @@ $(document).ready(() => {
 		// Add verification code input
 		$("#stock-container").append(
 			`
-			<p>${user_id}</p>
+			<p style="">Wrong verification code.</p>
 			<input id="verification-input" type="text" placeholder="Verification code">
 			<button id="verification-submit">Verify</button>
 			`
@@ -31,41 +31,37 @@ $(document).ready(() => {
 		});
 	});
 
-	// document.getElementById("refresh-stocks-btn").addEventListener("click", function () {
-	// 	console.log("Button was clicked");
-	// 	socket.emit("API_CALL");
-
-	// 	setInterval(() => {
-	// 		console.log("Refreshing data");
-	// 		socket.emit("API_CALL");
-	// 	}, 5000);
-	// });
-
 	socket.on("SEND_DATA", (data) => {
 		// Erase old containers
 		$("#stock-container").empty();
 
 		// Create new containers
-		for (let i = 0; i < data.length; i++) {
-			let buy;
-			if (data[i]["data"]["price"] == "Up") {
-				buy = "BUY BUY BUY";
-			} else {
-				buy = "SELL SELL SELL";
-			}
-
+		if (data["error"]) {
 			$("#stock-container").append(`
-            <div class="stock-card">
-                <h2 style="text-align: center; font-weight: bold;">${data[i]["name"]}</h2>
-                <h3 style="text-align: center;">${buy}</h3>
-                <ul>
-                <li>Current price: ${data[i]["data"]["current"]}</li>
-                <li>Opening price: ${data[i]["data"]["open"]}</li>
-                <li>High price: ${data[i]["data"]["high"]}</li>
-                <li>Low price: ${data[i]["data"]["low"]}</li>
-                </ul>
-            </div>
-            `);
+			<p>We ran out of api calls. Should probably make a paid account, eh?</p>
+			`);
+		} else {
+			for (let i = 0; i < data.length; i++) {
+				let buy;
+				if (data[i]["data"]["price"] == "Up") {
+					buy = "BUY BUY BUY";
+				} else {
+					buy = "SELL SELL SELL";
+				}
+
+				$("#stock-container").append(`
+				<div class="stock-card">
+					<h2 style="text-align: center; font-weight: bold;">${data[i]["name"]}</h2>
+					<h3 style="text-align: center;">${buy}</h3>
+					<ul>
+					<li>Current price: ${data[i]["data"]["current"]}</li>
+					<li>Opening price: ${data[i]["data"]["open"]}</li>
+					<li>High price: ${data[i]["data"]["high"]}</li>
+					<li>Low price: ${data[i]["data"]["low"]}</li>
+					</ul>
+				</div>
+				`);
+			}
 		}
 	});
 
@@ -81,10 +77,13 @@ $(document).ready(() => {
 		setInterval(() => {
 			console.log("Refreshing data");
 			socket.emit("API_CALL");
-		}, 5000);
+		}, 10000);
 	});
 
 	socket.on("BAD_CODE", () => {
 		console.log("Bad code entered.");
+		$("stock-container").append(`
+		<>
+		`);
 	});
 });

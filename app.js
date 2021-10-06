@@ -103,6 +103,11 @@ const getQuotes = () => {
 					finnhubClient.quote(indexes[i], (error, data, response) => {
 						let price;
 
+						if (error) {
+							console.log(error);
+							reject({ error: "no data" });
+						}
+
 						if (data["c"] >= data["o"]) {
 							price = "Up";
 						} else {
@@ -129,7 +134,7 @@ const getQuotes = () => {
 				resolve(data);
 			})
 			.catch((err) => {
-				console.log(err);
+				resolve(err);
 			});
 	});
 };
