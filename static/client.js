@@ -17,9 +17,11 @@ $(document).ready(() => {
 		// Add verification code input
 		$("#stock-container").append(
 			`
-			<p id="bad-code-warning" style="visibility: hidden;">Wrong verification code.</p>
+			<div id="verification" style="display: flex; justify-content: center; width: 75vw">
+			<p id="bad-code-warning" style="visibility: hidden;">Wrong verification code. Try again. </p>
 			<input id="verification-input" type="text" placeholder="Verification code">
 			<button id="verification-submit">Verify</button>
+			</div>
 			`
 		);
 
