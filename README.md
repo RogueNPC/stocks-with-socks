@@ -51,6 +51,14 @@ Once you verify your email, you'll recieve your stock updates:
 
 ![App Screenshot](https://i.imgur.com/K0Zay8J.png)
 
+## Tech Stack
+
+**Client:** HTML, CSS
+
+**Server:** Node, Express, 
+
+**Other tools:** Socket.IO, nodemailer, Finnhub
+
 ## Authors
 
 - [@numel007](https://www.github.com/numel007)
