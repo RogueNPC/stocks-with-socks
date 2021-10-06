@@ -17,14 +17,19 @@ $(document).ready(() => {
 		// Add verification code input
 		$("#stock-container").append(
 			`
-			<p>User id: ${user_id}</p>
+			<p>${user_id}</p>
 			<input id="verification-input" type="text" placeholder="Verification code">
 			<button id="verification-submit">Verify</button>
 			`
 		);
-	});
 
-	// Add listener for verification code input
+		// Add listener for verification code input
+		document.getElementById("verification-submit").addEventListener("click", (e) => {
+			e.preventDefault();
+			let code = document.getElementById("verification-input").value;
+			socket.emit("VERIFY_CODE", [user_id, code]);
+		});
+	});
 
 	// document.getElementById("refresh-stocks-btn").addEventListener("click", function () {
 	// 	console.log("Button was clicked");
@@ -36,7 +41,6 @@ $(document).ready(() => {
 	// 	}, 5000);
 	// });
 
-	// --- Recievers ---
 	socket.on("SEND_DATA", (data) => {
 		// Erase old containers
 		$("#stock-container").empty();
@@ -66,6 +70,21 @@ $(document).ready(() => {
 	});
 
 	socket.on("SEND_USER_ID", (userId) => {
+		console.log(`Setting user id to ${userId}`);
 		user_id = userId;
+	});
+
+	socket.on("GOOD_CODE", () => {
+		$("#stock-container").empty();
+		socket.emit("API_CALL");
+
+		setInterval(() => {
+			console.log("Refreshing data");
+			socket.emit("API_CALL");
+		}, 5000);
+	});
+
+	socket.on("BAD_CODE", () => {
+		console.log("Bad code entered.");
 	});
 });
