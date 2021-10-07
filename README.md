@@ -2,6 +2,10 @@
 
 A minimalistic, intuitive web-socket application that allows you to recieve stock updates
 
+## Why Web sockets?
+
+When trading and investing in the stock market, you need instant updates to maximize profit, and Web sockets are fater than HTTP requests/responses
+
 ## Features
 
 - Fullscreen mode
