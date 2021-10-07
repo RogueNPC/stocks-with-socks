@@ -29,12 +29,15 @@ app.get("/", (req, res) => {
 let connectedUsers = {};
 
 io.on("connection", (socket) => {
+	// Generate verification code when user joins, store it with userId in connectedUsers obj
 	let randNum = Math.floor(Math.random() * (10000 - 1)) + 1;
 	connectedUsers[socket.id] = { verification_code: randNum.toString() };
 	io.emit("SEND_USER_ID", socket.id);
 	console.log(`New connection! Users: ${util.inspect(connectedUsers)}`);
 
 	// --- Recievers ---
+
+	// Recieves email from frontend, adds email to logged in user's object
 	socket.on("SEND_EMAIL", (data) => {
 		// data[0]: user id
 		// data[1]: user email
@@ -45,6 +48,7 @@ io.on("connection", (socket) => {
 			verification_code: connectedUsers[data[0]]["verification_code"],
 		};
 
+		// Email the user a verification code
 		nodemailerMailgun
 			.sendMail({
 				from: "no-reply@stockswithsocks.com",
@@ -60,10 +64,12 @@ io.on("connection", (socket) => {
 			});
 	});
 
+	// Checks verification code against what's store in connectedUsers
 	socket.on("VERIFY_CODE", (data) => {
 		// data[0]: user id
 		// data[1]: verification code
 
+		// Return good or bad response
 		if (connectedUsers[data[0]]["verification_code"] === data[1]) {
 			io.emit("GOOD_CODE", data);
 		} else {
@@ -71,12 +77,14 @@ io.on("connection", (socket) => {
 		}
 	});
 
+	// Sends stock data
 	socket.on("API_CALL", () => {
 		getQuotes().then((data) => {
 			io.emit("SEND_DATA", data);
 		});
 	});
 
+	// Removes user from connectedUsers on disconnect
 	socket.on("disconnect", () => {
 		delete connectedUsers[socket.id];
 		console.log(`${socket.id} disconnected! ${util.inspect(connectedUsers)}`);

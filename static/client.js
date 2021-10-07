@@ -3,6 +3,7 @@ $(document).ready(() => {
 
 	let user_id;
 
+	// Event listener for email input
 	document.getElementById("email-submit").addEventListener("click", (e) => {
 		e.preventDefault();
 		let email = document.getElementById("email-input").value;
@@ -27,10 +28,12 @@ $(document).ready(() => {
 		document.getElementById("verification-submit").addEventListener("click", (e) => {
 			e.preventDefault();
 			let code = document.getElementById("verification-input").value;
+			// Verify code with backend
 			socket.emit("VERIFY_CODE", [user_id, code]);
 		});
 	});
 
+	// Recieves stock data from backend
 	socket.on("SEND_DATA", (data) => {
 		// Erase old containers
 		$("#stock-container").empty();
@@ -65,10 +68,12 @@ $(document).ready(() => {
 		}
 	});
 
+	//
 	socket.on("SEND_USER_ID", (userId) => {
 		user_id = userId;
 	});
 
+	// On verification approval, begin updating site with stock data every 10 secs
 	socket.on("GOOD_CODE", () => {
 		$("#stock-container").empty();
 		socket.emit("API_CALL");
@@ -79,6 +84,7 @@ $(document).ready(() => {
 		}, 10000);
 	});
 
+	// Throw warning on bad verification code
 	socket.on("BAD_CODE", () => {
 		console.log("Bad code entered.");
 		document.getElementById("bad-code-warning").style.visibility = "visible";
